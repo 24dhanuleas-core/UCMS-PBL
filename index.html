@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Club Management System (UCMS) | SE Lab PBL</title>
+  <meta name="description" content="University Club Management System (UCMS) - Event Proposal & Approval Workflow and QR-Code Automated Attendance System">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Academic Metadata Strip -->
+  <header class="top-banner">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span>🎓 <strong>Software Engineering PBL Project:</strong> University Club Management System (UCMS)</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="badge-pill">Author: Arya Dhanule (A6_B4_64)</span>
+      <span class="badge-pill">IEEE Std 830-1998 Aligned</span>
+    </div>
+  </header>
+
+  <!-- Sticky Main Navbar -->
+  <nav class="navbar">
+    <div class="brand-section">
+      <div class="brand-logo">🏛️</div>
+      <div class="brand-title">
+        <h1>UCMS Portal</h1>
+        <p>University Club Management & Attendance System</p>
+      </div>
+    </div>
+
+    <!-- Role Switcher -->
+    <div class="nav-roles">
+      <button class="role-btn active" data-role="student" onclick="setRole('student')">
+        <span class="role-icon">👨‍🎓</span> Student View
+      </button>
+      <button class="role-btn" data-role="officer" onclick="setRole('officer')">
+        <span class="role-icon">🏛️</span> Club Officer
+      </button>
+      <button class="role-btn" data-role="faculty" onclick="setRole('faculty')">
+        <span class="role-icon">👩‍🏫</span> Faculty Advisor
+      </button>
+      <button class="role-btn" data-role="jira" onclick="setRole('jira')">
+        <span class="role-icon">📋</span> JIRA Project Hub
+      </button>
+    </div>
+
+    <!-- Actions: Theme & Reset -->
+    <div class="nav-actions">
+      <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme (Dark / Light)">🌓</button>
+      <button class="btn-icon" onclick="resetDemoData()" title="Reset Demo Data">🔄</button>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- Active Role Context Banner -->
+    <section class="role-context-bar">
+      <div class="role-info">
+        <div class="role-avatar" id="context-avatar">🎓</div>
+        <div class="role-details">
+          <h2 id="context-title">Student Portal</h2>
+          <p id="context-subtitle">Discover campus clubs, register for events, and access your digital QR entry pass.</p>
+        </div>
+      </div>
+      <div class="role-quick-stats">
+        <div class="quick-stat">
+          <span class="num">5</span>
+          <span class="lbl">Campus Venues</span>
+        </div>
+        <div class="quick-stat">
+          <span class="num">100%</span>
+          <span class="lbl">Zero Conflict Lock</span>
+        </div>
+        <div class="quick-stat">
+          <span class="num">AES-QR</span>
+          <span class="lbl">Pass Security</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 1: STUDENT VIEW ==================== -->
+    <section id="view-student" class="view-section active">
+      <div class="section-header">
+        <h3><span>📅</span> Approved Campus Club Events</h3>
+        <span style="font-size:0.85rem; color:var(--text-secondary);">Browse upcoming verified events and register for digital QR passes</span>
+      </div>
+
+      <!-- Events Grid -->
+      <div class="grid-cols-3" id="student-events-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- My Registered Passes & Certificates Section -->
+      <div style="margin-top: 36px;">
+        <div class="section-header">
+          <h3><span>🎟️</span> My Digital Passes & Participation Certificates</h3>
+        </div>
+        <div id="student-my-passes">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: CLUB OFFICER VIEW ==================== -->
+    <section id="view-officer" class="view-section">
+      <div class="section-header">
+        <h3><span>🏛️</span> Club Governance & Event Management</h3>
+        <div class="section-actions">
+          <button class="btn btn-primary" onclick="openCreateEventModal()">
+            <span>➕</span> Propose New Event
+          </button>
+        </div>
+      </div>
+
+      <!-- Club Officer Submitted Events Grid -->
+      <div class="grid-cols-3" id="officer-events-container" style="margin-bottom: 32px;">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Master Campus Calendar & Venue Conflict Grid -->
+      <div class="card" style="margin-bottom: 32px;">
+        <div class="card-header">
+          <div>
+            <h4 class="card-title">📅 Master Campus Venue Reservation Calendar</h4>
+            <div class="card-subtitle">Real-time locks prevent venue double-booking as per SRS REQ-F-04</div>
+          </div>
+          <span class="badge badge-approved">Live Lock Active</span>
+        </div>
+        <div class="calendar-grid" id="master-calendar-grid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Module 2: QR Scanner & Entrance Verification Console -->
+      <div id="scanner-console-anchor" class="card">
+        <div class="card-header">
+          <div>
+            <h4 class="card-title">📷 Module 2: Real-Time QR Scanner & Entrance Verification Console</h4>
+            <div class="card-subtitle">Live check-in verification with instant duplicate entry prevention (SRS Functionality 2)</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label for="scanner-event-select" style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Active Event:</label>
+            <select id="scanner-event-select" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.82rem;">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+        </div>
+
+        <div class="scanner-grid">
+          <!-- Scanner Viewfinder & Triggers -->
+          <div class="scanner-viewfinder-card">
+            <div class="viewfinder-box">
+              <div class="scan-laser"></div>
+              <div class="viewfinder-hud"></div>
+              <div class="viewfinder-status-overlay">
+                <div style="font-size:1.8rem; margin-bottom:8px;">📷</div>
+                <div>Position QR Pass within target box</div>
+                <div style="font-size:0.75rem; color:var(--accent-primary); margin-top:4px;">Ready for live token verification</div>
+              </div>
+            </div>
+
+            <!-- Visual Feedback Alerts -->
+            <div id="scanner-feedback-box" class="scan-feedback-box">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Rapid Test Simulator Buttons (For Evaluation Demonstration) -->
+            <div style="width: 100%; margin-top: 14px;">
+              <div style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px; text-transform:uppercase;">
+                ⚡ Fast Evaluation Testing Triggers:
+              </div>
+              <div class="quick-scan-triggers">
+                <button class="btn btn-success btn-sm" onclick="simulateScan('valid')">
+                  ⚡ Test Valid Scan
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="simulateScan('duplicate')">
+                  ⚠️ Test Duplicate Scan
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="simulateScan('invalid')">
+                  ❌ Test Invalid Token
+                </button>
+              </div>
+            </div>
+
+            <!-- Manual Token Entry Option -->
+            <form onsubmit="handleManualScanSubmit(event)" style="width: 100%; margin-top: 16px; display:flex; gap:8px;">
+              <input type="text" id="manual-token-input" class="form-control" placeholder="Or paste QR Token / Ticket ID..." style="font-size:0.82rem; font-family:var(--font-mono);">
+              <button type="submit" class="btn btn-secondary btn-sm">Verify</button>
+            </form>
+          </div>
+
+          <!-- Attendance Roster & Live Stats -->
+          <div>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:16px;">
+              <div class="card" style="padding:14px; text-align:center;">
+                <div id="stat-registered" style="font-family:var(--font-mono); font-size:1.4rem; font-weight:700; color:var(--info);">0</div>
+                <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Registered</div>
+              </div>
+              <div class="card" style="padding:14px; text-align:center;">
+                <div id="stat-checkedin" style="font-family:var(--font-mono); font-size:1.4rem; font-weight:700; color:var(--success);">0</div>
+                <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Checked-In</div>
+              </div>
+              <div class="card" style="padding:14px; text-align:center;">
+                <div id="stat-rate" style="font-family:var(--font-mono); font-size:1.4rem; font-weight:700; color:var(--accent-primary);">0%</div>
+                <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Attendance Rate</div>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h5 style="font-size:0.9rem; font-weight:700;">Live Event Attendance Roster</h5>
+              <button class="btn btn-secondary btn-sm" onclick="exportAttendanceCSV()">
+                📥 Export CSV
+              </button>
+            </div>
+
+            <div class="table-container" style="max-height: 280px; overflow-y: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ticket</th>
+                    <th>Student Name</th>
+                    <th>PRN</th>
+                    <th>Dept</th>
+                    <th>Status</th>
+                    <th>Check-in Time</th>
+                  </tr>
+                </thead>
+                <tbody id="scanner-roster-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: FACULTY ADVISOR VIEW ==================== -->
+    <section id="view-faculty" class="view-section">
+      <div class="section-header">
+        <h3><span>👩‍🏫</span> Faculty Advisor Governance Portal</h3>
+        <span style="font-size:0.85rem; color:var(--text-secondary);">Multi-tier approval workflow, venue verification & budget audit (SRS Functionality 1)</span>
+      </div>
+
+      <h4 style="font-size:1.05rem; font-weight:700; margin-bottom:14px; color:var(--warning);">
+        ⏳ Pending Event Proposals Requiring Approval
+      </h4>
+      <div class="grid-cols-2" id="faculty-proposals-container" style="margin-bottom: 32px;">
+        <!-- Rendered by JS -->
+      </div>
+
+      <h4 style="font-size:1.05rem; font-weight:700; margin-bottom:14px; color:var(--text-secondary);">
+        📜 Processed Event Approvals History
+      </h4>
+      <div class="grid-cols-3" id="faculty-approved-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: JIRA PROJECT MANAGEMENT HUB ==================== -->
+    <section id="view-jira" class="view-section">
+      <div class="section-header">
+        <h3><span>📋</span> JIRA Project Management & Defect Tracking Board</h3>
+        <span style="font-size:0.85rem; color:var(--text-secondary);">Individual PBL Activity Evaluation - Arya Dhanule (A6_B4_64)</span>
+      </div>
+
+      <!-- JIRA Meta Strip -->
+      <div class="jira-meta-strip">
+        <div class="jira-pill">
+          <strong>Project:</strong>
+          <span>University Club Management System (UCMS)</span>
+        </div>
+        <div class="jira-pill">
+          <strong>Key:</strong>
+          <span>UCMS</span>
+        </div>
+        <div class="jira-pill">
+          <strong>Methodology:</strong>
+          <span>Agile Scrum (2 Sprints)</span>
+        </div>
+        <div class="jira-pill">
+          <strong>Project Lead:</strong>
+          <span>Arya Dhanule</span>
+        </div>
+        <div class="jira-pill">
+          <strong>Total Velocity:</strong>
+          <span>31 Story Points</span>
+        </div>
+      </div>
+
+      <!-- Scrum Board -->
+      <div class="card" style="margin-bottom: 28px;">
+        <div class="card-header">
+          <div>
+            <h4 class="card-title">Interactive Sprint Scrum Board</h4>
+            <div class="card-subtitle">User stories across Sprint 1 (Event Approvals) and Sprint 2 (QR Attendance & Passes)</div>
+          </div>
+          <span class="badge badge-approved">Sprint 2 Completed</span>
+        </div>
+
+        <div class="scrum-board">
+          <!-- To Do -->
+          <div class="scrum-col">
+            <div class="scrum-col-header todo">
+              <span>To Do</span>
+              <span class="scrum-badge-count" id="count-todo">0</span>
+            </div>
+            <div id="scrum-todo"></div>
+          </div>
+
+          <!-- In Progress -->
+          <div class="scrum-col">
+            <div class="scrum-col-header inprogress">
+              <span>In Progress</span>
+              <span class="scrum-badge-count" id="count-inprogress">0</span>
+            </div>
+            <div id="scrum-inprogress"></div>
+          </div>
+
+          <!-- Code Review -->
+          <div class="scrum-col">
+            <div class="scrum-col-header review">
+              <span>Code Review</span>
+              <span class="scrum-badge-count" id="count-review">0</span>
+            </div>
+            <div id="scrum-review"></div>
+          </div>
+
+          <!-- Done -->
+          <div class="scrum-col">
+            <div class="scrum-col-header done">
+              <span>Done</span>
+              <span class="scrum-badge-count" id="count-done">6</span>
+            </div>
+            <div id="scrum-done"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Defect / Bug Tracking Table -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h4 class="card-title">🐛 JIRA Defect & Bug Tracking Matrix</h4>
+            <div class="card-subtitle">Identified defects, steps to reproduce, root causes, resolutions, and retesting evidence</div>
+          </div>
+          <span class="badge badge-approved">All 5 Bugs Closed / Verified</span>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Bug ID</th>
+                <th>Defect Summary</th>
+                <th>Module</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Resolution / Retesting Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="jira-bug-table-body">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal 1: Create Event Proposal (Module 1) -->
+  <div id="modal-create-event" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>➕ Submit Event Proposal Form</h3>
+        <button class="close-btn" onclick="closeModal('modal-create-event')">&times;</button>
+      </div>
+
+      <form onsubmit="submitEventProposal(event)">
+        <div class="form-group">
+          <label for="event-title">Event Title *</label>
+          <input type="text" id="event-title" class="form-control" placeholder="e.g. National AI & Cloud Hackathon 2026" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-club">Organizing Club *</label>
+            <select id="event-club" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label for="event-venue">Requested Campus Venue *</label>
+            <select id="event-venue" class="form-control" required></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-date">Event Date *</label>
+            <input type="date" id="event-date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="event-audience">Expected Attendees (Capacity Check) *</label>
+            <input type="number" id="event-audience" class="form-control" min="10" max="1000" value="100" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-start">Start Time *</label>
+            <input type="time" id="event-start" class="form-control" value="10:00" required>
+          </div>
+          <div class="form-group">
+            <label for="event-end">End Time *</label>
+            <input type="time" id="event-end" class="form-control" value="14:00" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="event-description">Event Description & Agenda *</label>
+          <textarea id="event-description" class="form-control" rows="3" placeholder="Provide detailed agenda, guest speakers, and student prerequisites..." required></textarea>
+        </div>
+
+        <!-- Itemized Financial Budget Section -->
+        <div style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <strong style="font-size:0.88rem; color:var(--text-primary);">💰 Itemized Financial Budget Request</strong>
+            <span style="font-size:0.8rem; color:var(--text-secondary);">Max Club Quota Cap: <strong>$1,500</strong></span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="budget-equip">AV & Equipment ($)</label>
+              <input type="number" id="budget-equip" class="form-control" min="0" value="300">
+            </div>
+            <div class="form-group">
+              <label for="budget-food">Refreshments ($)</label>
+              <input type="number" id="budget-food" class="form-control" min="0" value="250">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="budget-guest">Guest Speaker / Honorarium ($)</label>
+              <input type="number" id="budget-guest" class="form-control" min="0" value="200">
+            </div>
+            <div class="form-group">
+              <label for="budget-mktg">Printing & Marketing ($)</label>
+              <input type="number" id="budget-mktg" class="form-control" min="0" value="100">
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px dashed var(--border-color);">
+            <span style="font-weight:600; font-size:0.9rem;">Calculated Total Budget:</span>
+            <span id="budget-total-display" style="font-family:var(--font-mono); font-size:1.2rem; font-weight:700; color:var(--accent-primary);">$850</span>
+          </div>
+
+          <div id="budget-cap-warning" class="alert-banner alert-danger" style="display:none; margin-top:10px; margin-bottom:0;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-create-event')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit for Faculty Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Student Event Registration (Module 2) -->
+  <div id="modal-register-event" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>🎟️ Student Event Registration</h3>
+        <button class="close-btn" onclick="closeModal('modal-register-event')">&times;</button>
+      </div>
+
+      <form onsubmit="submitEventRegistration(event)">
+        <input type="hidden" id="reg-event-id">
+
+        <div class="card" style="margin-bottom:16px; padding:14px; background:var(--bg-primary);">
+          <div id="reg-event-title" style="font-weight:700; font-size:1rem; margin-bottom:4px;"></div>
+          <div id="reg-event-meta" style="font-size:0.8rem; color:var(--text-secondary);"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-name">Full Student Name *</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="e.g. Arya Dhanule" value="Arya Dhanule" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-prn">University PRN / Roll Number *</label>
+            <input type="text" id="reg-prn" class="form-control" placeholder="e.g. PRN2024098" value="PRN2024098" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-email">University Email *</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="e.g. arya.dhanule@university.edu" value="arya.dhanule@university.edu" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-dept">Department *</label>
+            <select id="reg-dept" class="form-control" required>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electronics & Telecom">Electronics & Telecom</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reg-year">Academic Year *</label>
+            <select id="reg-year" class="form-control" required>
+              <option value="First Year">First Year</option>
+              <option value="Second Year">Second Year</option>
+              <option value="Third Year">Third Year</option>
+              <option value="Final Year" selected>Final Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-register-event')">Cancel</button>
+          <button type="submit" class="btn btn-success">Confirm & Generate QR Pass</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Digital QR Event Entry Pass (Module 2) -->
+  <div id="modal-ticket-pass" class="modal-overlay">
+    <div class="modal-container" style="max-width: 540px; background:transparent; border:none; padding:0;">
+      <div class="pass-ticket-card">
+        <div class="pass-header">
+          <div class="pass-brand">
+            <div style="font-size:0.75rem; color:#818cf8; letter-spacing:0.1em; text-transform:uppercase;">Official Entry Credential</div>
+            <div id="pass-event-title" style="font-size:1.15rem; font-weight:700; color:white;"></div>
+          </div>
+          <span id="pass-status-pill" class="pass-badge">VALID ENTRY PASS</span>
+        </div>
+
+        <div class="pass-content">
+          <div class="qr-code-box">
+            <div id="pass-qr-canvas"></div>
+          </div>
+          <div class="pass-details-list">
+            <div class="pass-row">
+              <div class="pass-lbl">Attendee Name</div>
+              <div id="pass-attendee-name" class="pass-val"></div>
+            </div>
+            <div class="pass-row">
+              <div class="pass-lbl">PRN & Department</div>
+              <div class="pass-val"><span id="pass-attendee-prn"></span> &bull; <span id="pass-attendee-dept" style="font-size:0.8rem; color:#cbd5e1;"></span></div>
+            </div>
+            <div class="pass-row">
+              <div class="pass-lbl">Venue Location</div>
+              <div id="pass-event-venue" class="pass-val" style="font-size:0.85rem;"></div>
+            </div>
+            <div class="pass-row">
+              <div class="pass-lbl">Date & Time</div>
+              <div id="pass-event-time" class="pass-val" style="font-size:0.85rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pass-footer">
+          <div>Pass ID: <strong id="pass-ticket-id"></strong></div>
+          <div style="font-size:0.65rem; color:#64748b; max-width:260px; overflow:hidden; text-overflow:ellipsis;" id="pass-token-code"></div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:12px; margin-top:16px;">
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print Pass</button>
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-ticket-pass')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Digital Certificate of Participation (Module 2) -->
+  <div id="modal-certificate" class="modal-overlay">
+    <div class="modal-container" style="max-width: 760px; padding:0; background:transparent; border:none;">
+      <div class="cert-card">
+        <div class="cert-inner">
+          <div class="cert-header">
+            <h4>Certificate of Participation</h4>
+            <p>University Club Council &bull; Directorate of Student Affairs</p>
+          </div>
+
+          <div class="cert-body">
+            <p style="font-size:0.95rem; color:#4b5563;">This is to proudly certify that</p>
+            <div class="cert-student-name" id="cert-name">Arya Dhanule</div>
+            <p style="font-size:0.88rem; color:#6b7280;">PRN: <strong id="cert-prn">PRN2024098</strong></p>
+            <p style="font-size:0.95rem; color:#4b5563; margin-top:12px;">
+              has actively attended and successfully participated in
+            </p>
+            <div style="font-family:var(--font-heading); font-size:1.3rem; font-weight:700; color:#312e81; margin:8px 0;" id="cert-event-title">
+              National AI & Cloud Hackathon 2026
+            </div>
+            <p style="font-size:0.85rem; color:#6b7280;">
+              Organized by <strong id="cert-club-name">ACM Student Chapter</strong> on <span id="cert-date">Nov 15, 2026</span>.
+            </p>
+          </div>
+
+          <div class="cert-footer">
+            <div class="sig-box">
+              <div class="sig-line"></div>
+              <div class="sig-title">Faculty Advisor</div>
+            </div>
+            <div id="cert-qr-box" style="display:inline-block; padding:4px; background:white; border:1px solid #e2e8f0; border-radius:4px;"></div>
+            <div class="sig-box">
+              <div class="sig-line"></div>
+              <div class="sig-title">Dean, Student Affairs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:12px; margin-top:16px;">
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print Certificate</button>
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-certificate')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Faculty Advisor Remarks / Revision Modal -->
+  <div id="modal-faculty-feedback" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="feedback-modal-header">Faculty Advisor Decision</h3>
+        <button class="close-btn" onclick="closeModal('modal-faculty-feedback')">&times;</button>
+      </div>
+
+      <form onsubmit="submitFacultyFeedback(event)">
+        <input type="hidden" id="feedback-event-id">
+        <input type="hidden" id="feedback-action-type">
+
+        <div class="form-group">
+          <label for="faculty-remarks-input">Advisor Comments / Required Revisions *</label>
+          <textarea id="faculty-remarks-input" class="form-control" rows="4" placeholder="Detail specific budget adjustments, schedule modifications, or venue requirements..." required></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-faculty-feedback')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Decision</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
